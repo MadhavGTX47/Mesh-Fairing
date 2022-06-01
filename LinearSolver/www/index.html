@@ -1,0 +1,269 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE></TITLE>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01SGoldC-SGI (X11; I; IRIX 6.3 IP32) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#9A0065" ALINK="#FF0000">
+
+<H1>C++ Solvers for Sparse Systems of Linear Equations</H1>
+
+<P>&nbsp; <BR>
+<IMG SRC="line_eyes.gif" HEIGHT=9 WIDTH=582 ALIGN=TEXTTOP> </P>
+
+<H2>Purpose</H2>
+
+<P><FONT SIZE=+0>Solve a n-dimensional problem Ax=b up to a residual of&nbsp;
+|Ax-b| &lt; eps*|b|</FONT>&nbsp; (A matrix; x,b vectors). </P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<H2>General</H2>
+
+<P>This package contains easy-to-use functions for approximately solving
+sparse systems of linear equations by implicit methods, written in C++.
+For making most efficient use of the sparsity pattern and the spirit of
+implicit solvers, the user has to provide the application of the matrix
+to vectors; he is absolutely free in designing his matrix. <BR>
+For performance reasons, the (highly optimized) BLAS (Basic Linear Algebra
+Subroutines, levels 1 and 2) are used. So you have to link the appropriate
+lib's, e.g. under IRIX this means adding '<TT>-lblas -lftn</TT>' to your
+linker line (<TT>-lftn</TT> is needed for linking the Fortran lib, since
+the BLAS is written in Fortran). <BR>
+<B>Note</B>: Usually, the solver is dominated by the matrix-vector product,
+so optimizing the (user-provided) matrix-vector multiplication is much
+more important than optimizing the solver itself. </P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<H2>Implemented Functions</H2>
+
+<UL>
+<LI>CG method by Hestenes and Stiefel (function name: <B>cghs</B>)</LI>
+
+<LI>CGS (also called BICGsq) by Sonneveld (function name: <B>bicgsq</B>)</LI>
+
+<LI>BICGstab (function name: <B>bicgstab</B>)</LI>
+
+<LI>GMRES(m) by Saad and Schultz (function name: <B>gmres</B>)</LI>
+
+<LI><B>Note</B>: <B>cghs</B> can only be applied to spd problems, whereas
+<B>bicgsq</B>, <B>bicgstab</B>, and <B>gmres</B>(m) can also be applied
+to non-symmetric or indefinite problems.</LI>
+</UL>
+
+<H2>
+<HR WIDTH="100%"></H2>
+
+<H2><B>Include Files</B></H2>
+
+<P>Each solver has its own header file: </P>
+
+<UL>
+<LI><B>cghs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </B><TT>#include
+&quot;lsolver/cghs.h&quot;</TT></LI>
+
+<LI><B>bicgsq:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </B><TT>#include &quot;lsolver/bicgsq.h&quot;</TT></LI>
+
+<LI><B>bicgstab:&nbsp;&nbsp;&nbsp; </B><TT>#include &quot;lsolver/bicgstab.h&quot;</TT></LI>
+
+<LI><B>gmres</B>(m)<B>:&nbsp;&nbsp; </B><TT>#include &quot;lsolver/gmres.h&quot;</TT></LI>
+</UL>
+
+<P>So, you only have to #include the appropriate header file and additionally
+link the BLAS (and possibly the Fortran-lib if that is needed for the BLAS-lib).
+Note that no lib is needed for the solvers themselves - they are defined
+inline in the header files. </P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<H2><B>Function Call</B></H2>
+
+<P>The implemented functions are used for solving Ax=b, where A,x,b have
+the dimension n. The iteration stops&nbsp; when the residual satisfies
+|Ax-b| &lt; eps*|b|, where by |...| we mean the norm induced by the standard
+scalar product in <B>R</B><SUP>n</SUP>. The number of iterations is returned.
+</P>
+
+<P>There are different versions of <B>cghs</B>, <B>bicgsq</B>, and <B>bicgstab</B>:
+</P>
+
+<UL>
+<P><TT>cghs(n,A,b,x,eps)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</TT>--&nbsp;&nbsp; without preconditioner <BR>
+<TT>cghs(n,A,b,x,eps,true)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </TT>--&nbsp;&nbsp;
+without preconditioner, show residual after each iteration <BR>
+<TT>cghs(n,A,C,b,x,eps)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</TT>--&nbsp;&nbsp; with preconditioner <BR>
+<TT>cghs(n,A,C,b,x,eps,true)&nbsp;&nbsp;&nbsp;&nbsp; </TT>--&nbsp;&nbsp;
+with preconditioner, show residual after each iteration</P>
+</UL>
+
+<P>Corresponding calls are applicable for <B>bicgsq</B> and <B>bicgstab</B>.
+For <B>gmres</B> there is no preconditioned version implemented, so there
+are just the calls: </P>
+
+<UL>
+<P><TT>gmres(m,n,A,b,x,eps);</TT> <BR>
+<TT>gmres(m,n,A,b,x,eps,true);&nbsp;&nbsp; </TT>-- show residual after
+each iteration</P>
+</UL>
+
+<P><TT>int m:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </TT>number of (inner)
+iterations until restart (only for gmres) <BR>
+<TT>int n:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </TT>dimension <BR>
+<TT>A:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </TT>user-supplied
+matrix, of arbitrary type <BR>
+<TT>C:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </TT>user-supplied
+preconditioning matrix, of arbitrary type (only for preconditioned version)
+<BR>
+<TT>double *b:&nbsp;&nbsp; </TT>vector being solved <BR>
+<TT>double *x:&nbsp;&nbsp; </TT>before call: start vector for iterations,
+after call: approximate solution of Ax=b <BR>
+<TT>double eps:&nbsp; </TT>stopping criterion (see above) </P>
+
+<P><TT>m, n, A, C, b, eps</TT> are not changed </P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<H2>What you have to define</H2>
+
+<P>The matrices A and C (C is the preconditioning matrix) can be of arbitrary
+type, but a matrix-vector multiplication w=Av must be implemented by the
+user: </P>
+
+<UL>
+<P><TT>struct MyMatrix {</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; /* ... your implementation of the matrix ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/</TT> <BR>
+<TT>};</TT> </P>
+
+<P><TT>void mult( const MyMatrix &amp;A, const double *v, double *w ) {</TT>
+<BR>
+<TT>&nbsp;&nbsp;&nbsp; /* ... your implementation of the multiplication
+...&nbsp;&nbsp;&nbsp; */</TT> <BR>
+<TT>}</TT></P>
+</UL>
+
+<P>E.g. for a tridiagonal matrix, you can define: </P>
+
+<UL>
+<P><TT>// first the struct for the matrix</TT> <BR>
+<TT>struct TriDiagMatrix {</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; int n;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// dimension</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; double *b, *a, *c;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// the three diagonals</TT> <BR>
+<TT>};</TT> </P>
+
+<P><TT>// then we need the multiplication to a vector</TT> <BR>
+<TT>void mult( const TriDiagMatrix &amp;T, const double *v, double *w )
+{</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; //&nbsp; disregarding the special cases for w[0],
+w[n-1]</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; for ( int i=1; i&lt;n-1; ++i )</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w[i] = T.b[i]*v[i-1] + T.a[i]*v[i]
++ T.c[i]*v[i+1];</TT> <BR>
+<TT>}</TT> <BR>
+<TT>&nbsp;</TT> <BR>
+<TT>// now the call is very easy ...</TT> <BR>
+<TT>#include &lt;cghs.h&gt;</TT> <BR>
+<TT>main( void ) {</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; int n=10;</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; double eps=1e-13;</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; double *x=new double[n];</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; double *b=new double[n];</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; TriDiagMatrix A;</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; /* ... (initializing stuff) ...&nbsp;&nbsp;&nbsp;
+*/</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; cghs(n,A,b,x,eps);</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; /* ... (output) ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; delete[] x;</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; delete[] b;</TT> <BR>
+<TT>}</TT></P>
+</UL>
+
+<P><B>Note 1:</B> <BR>
+The <B>preconditioned</B> versions of the solvers (e.g. cghs(n,A,C,b,x,eps)
+whith a preconditioner C) correspond to solving the problem B<SUP>-1</SUP>AB<SUP>-T</SUP>y=B<SUP>-1</SUP>b,
+x=B<SUP>-T</SUP>y with a regular matrix B, where the preconditioner C must
+be defined by C=B<SUP>-T</SUP>B<SUP>-1</SUP>. So, C should approximate
+the inverse of A.</P>
+
+<P><B>Note 2:</B> <BR>
+For this package, a matrix is defined by its matrix-vector multiplication,
+so the <B>matrix struct</B> and the <B>matrix-vector multiplication</B>
+always <B>belong together</B>. <BR>
+The easiest matrix (unity matrix) can even be defined as <TT>int</TT>,
+with the corresponding multiplication </P>
+
+<UL>
+<P><TT>#include &lt;string.h&gt;</TT> <BR>
+<TT>void mult( int dim, const double *v, double *w ) {</TT> <BR>
+<TT>&nbsp;&nbsp;&nbsp; memcpy(w,v,dim*sizeof(double));</TT> <BR>
+<TT>}</TT></P>
+</UL>
+
+<H2>
+<HR WIDTH="100%"></H2>
+
+<H2>Example Code</H2>
+
+<P>laplace3d: <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Laplace in 3D&nbsp; (-laplace(u)=f
+, u=0 on boundary) </P>
+
+<P>laplace2d: <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Laplace in 2D&nbsp; (-laplace(u)=f,
+u=0 on boundary) <BR>
+&nbsp; <BR>
+antisym: <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Solve Ax=b where A=I+B, B antisymmetric,
+I unity matrix <BR>
+&nbsp; <BR>
+<B>Note:</B> The Makefile used for the examples needs gmake (GNU make).
+</P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<H2>Download</H2>
+
+<P><A HREF="lsolver.tgz">Download</A> the complete package (including the
+examples and this html-file). </P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<H2>Literature</H2>
+
+<UL>
+<LI>Ashby, Manteuffel, Saylor: A taxonomy for conjugate gradient methods;
+SIAM J Numer Anal 27, 1542-1568 (1990)</LI>
+
+<LI><A HREF="http://www.mathematik.uni-freiburg.de/homepages/willy.html">Willy
+D&ouml;rfler</A>: <A HREF="http://www.mathematik.uni-freiburg.de/homepages/Willy/paperO1.html">Orthogonale
+Fehlermethoden</A></LI>
+
+<LI>Sonneveld: CGS, a fast Lanczos-type solver for nonsymmetric linear
+systems; SIAM J Sci Stat Comput 10, 36-52 (1989)</LI>
+
+<LI>Saad, Schultz: GMRES: a generalized minimal residual algorithm for
+solving nonsymmetric linear systems; SIAM J Sci Stat Comput 7, 856-869
+(1986)</LI>
+</UL>
+
+<P><IMG SRC="owl2.gif" HEIGHT=27 WIDTH=582 ALIGN=TEXTTOP> </P>
+
+<P><A HREF="mailto:badura@mathematik.uni-freiburg.de">Christian Badura</A>,
+02.11.98 <BR>
+&nbsp; </P>
+
+</BODY>
+</HTML>

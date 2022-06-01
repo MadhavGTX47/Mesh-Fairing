@@ -1,0 +1,7 @@
+antisym.o: antisym.cc argument.h lsolver/cghs.h lsolver/cblas.h \
+  lsolver/bicgsq.h lsolver/bicgstab.h lsolver/gmres.h
+laplace2d.o: laplace2d.cc argument.h lsolver/cghs.h lsolver/cblas.h \
+  lsolver/bicgsq.h lsolver/bicgstab.h lsolver/gmres.h
+laplace3d.o: laplace3d.cc argument.h lsolver/cghs.h lsolver/cblas.h \
+  lsolver/bicgsq.h lsolver/bicgstab.h lsolver/gmres.h
+argument.o: argument.cc argument.h
