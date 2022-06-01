@@ -20,11 +20,13 @@ Use:	```smooth bunny.obj output.obj 1 50```
  the output is "output.obj"
 
 For Implicit Integration:-
-Use:	```smooth bunny.obj output.obj 1 50 -i 0.000005 ```                  [must specify eps only at the end]
- 	for basic output, here 1 is the step size and 50 is the iterations, and -i is to specify eps 
-	and bunny obj is input file. 
+Use:	```smooth bunny.obj output.obj 1 50 -i 0.000005 ```                
 
- the output is "output.obj"
+[must specify eps only at the end]
+ for basic output, here 1 is the step size and 50 is the iterations, and -i is to specify eps 
+and bunny obj is input file. 
+
+the output is "output.obj"
       
 
 Note:-
