@@ -34,10 +34,6 @@ Implimented Extra Credit Implicit Itegration, please make sure you specify eps a
  
 Resources used:-
 
-Program Webiste 
-https://www.csee.umbc.edu/~adamb/435/proj4.html
-https://www.csee.umbc.edu/~adamb/435/implicit.cpp // for extra credit Implict integration
-
 Paper the Assig was based on:-
 http://multires.caltech.edu/pubs/ImplicitFairing.pdf
 
