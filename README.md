@@ -36,5 +36,3 @@ Resources used:-
 
 Paper the Assig was based on:-
 http://multires.caltech.edu/pubs/ImplicitFairing.pdf
-
-LinearSolver from Glserver for Extra Credit Implicit Integration
